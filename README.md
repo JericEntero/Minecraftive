@@ -3,7 +3,7 @@
 A fan-made interactive Minecraft website built with Bootstrap 5, vanilla JavaScript, and PHP.
 
 ## Live Site
-(SOON)
+https://jericentero.github.io/Minecraftive/
 
 ## Features
 - TNT intro animation with sound effect
