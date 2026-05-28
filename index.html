@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Minecraftive – An Interactive Minecraft Fan Hub</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+
+  <!-- Site Styles -->
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body class="tnt-active">
+
+<!-- ============================================================
+     FLASH & EXPLOSION OVERLAYS
+     ============================================================ -->
+<div id="flashOverlay"></div>
+<div id="explosionBurst"></div>
+
+<!-- ============================================================
+     TNT INTRO OVERLAY
+     ============================================================ -->
+<div id="tntOverlay">
+  <!-- Sparks -->
+  <div class="tnt-spark" style="top:20%;left:15%;--tx:-60px;--ty:-80px;animation-duration:2.1s;animation-delay:0s;background:#ff6600"></div>
+  <div class="tnt-spark" style="top:70%;left:80%;--tx:50px;--ty:-70px;animation-duration:1.8s;animation-delay:.4s;background:#ffcc00"></div>
+  <div class="tnt-spark" style="top:30%;left:75%;--tx:40px;--ty:60px;animation-duration:2.4s;animation-delay:.8s;background:#ff3300"></div>
+  <div class="tnt-spark" style="top:80%;left:25%;--tx:-40px;--ty:-50px;animation-duration:1.6s;animation-delay:.2s;background:#ff9900"></div>
+  <div class="tnt-spark" style="top:50%;left:90%;--tx:30px;--ty:80px;animation-duration:2.0s;animation-delay:1.0s;background:#ffcc00"></div>
+  <div class="tnt-spark" style="top:10%;left:50%;--tx:-20px;--ty:-60px;animation-duration:1.9s;animation-delay:.6s;background:#ff6600"></div>
+  <div class="tnt-spark" style="top:85%;left:60%;--tx:60px;--ty:-30px;animation-duration:2.3s;animation-delay:1.2s;background:#ff3300"></div>
+
+  <div class="tnt-content">
+    <div class="tnt-label-top">&#9888; MINECRAFTIVE FAN HUB &#9888;</div>
+
+    <div id="tntBlock" onclick="detonateTNT()" title="Click to enter the site!">
+      <img id="tntImg" src="images/tnt.png" alt="TNT Block"
+        onerror="this.style.display='none'; document.getElementById('tntFallbackSvg').style.display='block';"/>
+
+      <!-- Fallback SVG if tnt.png is missing -->
+      <svg id="tntFallbackSvg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="8"  y="2"  width="48" height="12" fill="#cc2200"/>
+        <rect x="12" y="4"  width="8"  height="4"  fill="#991a00" opacity=".6"/>
+        <rect x="28" y="4"  width="8"  height="4"  fill="#991a00" opacity=".6"/>
+        <rect x="44" y="4"  width="8"  height="4"  fill="#991a00" opacity=".6"/>
+        <rect x="4"  y="14" width="56" height="44" rx="1" fill="#cc2200"/>
+        <rect x="4"  y="22" width="56" height="16" fill="#e8e8e8"/>
+        <rect x="10" y="25" width="10" height="3"  fill="#cc2200"/>
+        <rect x="14" y="25" width="3"  height="10" fill="#cc2200"/>
+        <rect x="24" y="25" width="3"  height="10" fill="#cc2200"/>
+        <rect x="24" y="25" width="8"  height="3"  fill="#cc2200"/>
+        <rect x="29" y="25" width="3"  height="10" fill="#cc2200"/>
+        <rect x="24" y="31" width="8"  height="3"  fill="#cc2200"/>
+        <rect x="38" y="25" width="10" height="3"  fill="#cc2200"/>
+        <rect x="42" y="25" width="3"  height="10" fill="#cc2200"/>
+        <rect x="4"  y="38" width="56" height="20" fill="#aa1a00"/>
+        <rect x="30" y="0"  width="4"  height="4"  fill="#888"/>
+        <rect x="31" y="-2" width="2"  height="4"  fill="#aaa"/>
+        <circle cx="32" cy="0" r="3" fill="#FFD600" opacity=".9"/>
+        <circle cx="32" cy="0" r="5" fill="#ff9900" opacity=".4"/>
+      </svg>
+    </div>
+
+    <div class="tnt-click-hint">&#9658; CLICK TO IGNITE &#9668;</div>
+    <p class="tnt-sub-hint">Click the TNT to enter Minecraftive</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     CAROUSEL MODAL
+     ============================================================ -->
+<div id="carouselModal" role="dialog" aria-modal="true" aria-label="Item Carousel">
+  <div class="carousel-wrapper">
+    <div class="carousel-tabs" id="carouselTabs"></div>
+    <div class="carousel-slide-area">
+      <div class="carousel-track" id="carouselTrack"></div>
+    </div>
+    <div class="carousel-progress-wrap">
+      <div class="carousel-progress-bar" id="carouselProgressBar"></div>
+    </div>
+    <div class="carousel-bottom">
+      <div class="carousel-dots" id="carouselDots"></div>
+      <span class="carousel-counter" id="carouselCounter">1 / 1</span>
+      <div class="carousel-nav-group">
+        <button class="carousel-nav" id="carouselPrev" aria-label="Previous">&#8592;</button>
+        <button class="carousel-nav" id="carouselNext" aria-label="Next">&#8594;</button>
+        <button class="carousel-close" id="carouselClose" aria-label="Close carousel">&#10005; CLOSE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SITE CONTENT
+     ============================================================ -->
+<div id="siteContent">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="#hero">
+      <img src="images/logo.png" alt="Minecraftive Logo" class="navbar-logo">
+     <span class="navbar-brand-text">Minecraft<span class="navbar-brand-ive">ive</span></span>
+        </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto gap-1">
+          <li class="nav-item"><a class="nav-link" href="#mobs">&#129503; Mobs</a></li>
+          <li class="nav-item"><a class="nav-link" href="#biomes">&#127757; Biomes</a></li>
+          <li class="nav-item"><a class="nav-link" href="#seeds">&#127807; Seeds</a></li>
+          <li class="nav-item"><a class="nav-link" href="#creators">&#128100; Creators</a></li>
+          <li class="nav-item ms-lg-2">
+            <a class="nav-link btn btn-sm btn-mc px-3 py-1" href="#contact"
+               data-bs-toggle="modal" data-bs-target="#contactModal">&#128233; Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-pixel" style="left:5%;animation-duration:8s;animation-delay:0s;width:8px;height:8px"></div>
+    <div class="hero-pixel" style="left:15%;animation-duration:12s;animation-delay:2s;width:16px;height:16px;background:#FFD600"></div>
+    <div class="hero-pixel" style="left:30%;animation-duration:9s;animation-delay:4s;width:10px;height:10px"></div>
+    <div class="hero-pixel" style="left:55%;animation-duration:14s;animation-delay:1s;width:12px;height:12px;background:#795548"></div>
+    <div class="hero-pixel" style="left:70%;animation-duration:10s;animation-delay:3s;width:8px;height:8px"></div>
+    <div class="hero-pixel" style="left:85%;animation-duration:11s;animation-delay:.5s;width:14px;height:14px;background:#FFD600"></div>
+    <div class="hero-pixel" style="left:90%;animation-duration:13s;animation-delay:5s;width:10px;height:10px"></div>
+    <div class="hero-pixel" style="left:45%;animation-duration:7s;animation-delay:6s;width:8px;height:8px;background:#a5d6a7"></div>
+
+    <div class="hero-content px-3">
+      <div class="mb-3" style="font-size:.65rem;letter-spacing:4px;color:var(--mc-gold);font-family:'Press Start 2P',monospace;opacity:.7">
+        &#9888; FAN-MADE &middot; NOT OFFICIAL
+      </div>
+      <h1 class="hero-title">MINECRAFT<span style="color:var(--mc-gold);text-shadow:4px 4px 0 #b8860b,0 0 40px #FFD60088">IVE</span></h1>
+      <p class="hero-subtitle">An Interactive Minecraft Fan Hub</p>
+      <a href="#mobs" class="btn-mc">&#9658; Start Exploring</a>
+      <p class="hero-disclaimer mt-4">
+        This is a fan-made website. Minecraft is a trademark of Mojang Studios / Microsoft.<br>
+        We are not affiliated with, endorsed by, or sponsored by Mojang or Microsoft.
+      </p>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- MOBS -->
+  <section id="mobs">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">&#9876; Hostile</span>
+        <h2 class="section-title"><span style="color:var(--mc-gold)">Common</span> Dangerous Mobs</h2>
+        <p class="section-desc">Watch your back &mdash; these hostile creatures will attack on sight.
+          <em style="font-size:.8rem;color:#4a7a50">Click any card to explore all mobs.</em></p>
+      </div>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+
+        <div class="col">
+          <div class="mc-card" onclick="openCarousel('mobs',0)">
+            <div class="card-img-wrap">
+              <img src="images/creeper.png" alt="Creeper" class="card-img-top mc-card-img"
+                onerror="this.parentElement.innerHTML='<div class=\'card-img-fallback mob-bg-creeper\'>&#128163;</div>'">
+            </div>
+            <div class="card-body-mc">
+              <span class="card-badge" style="background:#2e7d3244;color:#a5d6a7;border:1px solid #2e7d32">HOSTILE</span>
+              <h5 class="card-name">Creeper</h5>
+              <p class="card-desc">Explodes when near players. Silent approach makes it one of the most dangerous mobs in the game.</p>
+              <span class="card-click-hint">&#9658; VIEW ALL</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="mc-card" onclick="openCarousel('mobs',1)">
+            <div class="card-img-wrap">
+              <img src="images/zombie.png" alt="Zombie" class="card-img-top mc-card-img"
+                onerror="this.parentElement.innerHTML='<div class=\'card-img-fallback mob-bg-zombie\'>&#129503;</div>'">
+            </div>
+            <div class="card-body-mc">
+              <span class="card-badge" style="background:#2e7d3244;color:#a5d6a7;border:1px solid #2e7d32">HOSTILE</span>
+              <h5 class="card-name">Zombie</h5>
+              <p class="card-desc">Common slow enemy mob. Spawns at night and burns in sunlight. Can break down wooden doors.</p>
+              <span class="card-click-hint">&#9658; VIEW ALL</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="mc-card" onclick="openCarousel('mobs',2)">
+            <div class="card-img-wrap">
+              <img src="images/skeleton.png" alt="Skeleton" class="card-img-top mc-card-img"
+                onerror="this.parentElement.innerHTML='<div class=\'card-img-fallback mob-bg-skeleton\'>&#128128;</div>'">
+            </div>
+            <div class="card-body-mc">
+              <span class="card-badge" style="background:#2e7d3244;color:#a5d6a7;border:1px solid #2e7d32">HOSTILE</span>
+              <h5 class="card-name">Skeleton</h5>
+              <p class="card-desc">Shoots arrows from a distance. Highly accurate and dangerous, especially in groups.</p>
+              <span class="card-click-hint">&#9658; VIEW ALL</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="mc-card" onclick="openCarousel('mobs',3)">
+            <div class="card-img-wrap">
+              <img src="images/spider.png" alt="Spider" class="card-img-top mc-card-img"
+                onerror="this.parentElement.innerHTML='<div class=\'card-img-fallback mob-bg-spider\'>&#128375;</div>'">
+            </div>
+            <div class="card-body-mc">
+              <span class="card-badge" style="background:#2e7d3244;color:#a5d6a7;border:1px solid #2e7d32">HOSTILE</span>
+              <h5 class="card-name">Spider</h5>
+              <p class="card-desc">Fast mob that climbs walls. Neutral in daylight, hostile at night. Can see through walls.</p>
+              <span class="card-click-hint">&#9658; VIEW ALL</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="mc-card" onclick="openCarousel('mobs',4)">
+            <div class="card-img-wrap">
+              <img src="images/enderman.png" alt="Enderman" class="card-img-top mc-card-img"
+                onerror="this.parentElement.innerHTML='<div class=\'card-img-fallback mob-bg-enderman\'>&#128420;</div>'">
+            </div>
+            <div class="card-body-mc">
+              <span class="card-badge" style="background:#2e7d3244;color:#a5d6a7;border:1px solid #2e7d32">HOSTILE</span>
+              <h5 class="card-name">Enderman</h5>
+              <p class="card-desc">Teleports and avoids water. Becomes hostile when looked in the eyes. Picks up blocks.</p>
+              <span class="card-click-hint">&#9658; VIEW ALL</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="mc-card" onclick="openCarousel('mobs',5)">
+            <div class="card-img-wrap">
+              <img src="images/witch.png" alt="Witch" class="card-img-top mc-card-img"
+                onerror="this.parentElement.innerHTML='<div class=\'card-img-fallback mob-bg-witch\'>&#129497;</div>'">
+            </div>
+            <div class="card-body-mc">
+              <span class="card-badge" style="background:#2e7d3244;color:#a5d6a7;border:1px solid #2e7d32">HOSTILE</span>
+              <h5 class="card-name">Witch</h5>
+              <p class="card-desc">Uses potions to attack and heal. Can throw harmful splash potions and is resistant to damage.</p>
+              <span class="card-click-hint">&#9658; VIEW ALL</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- BIOMES -->
+  <section id="biomes">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">&#127759; Exploration</span>
+        <h2 class="section-title"><span style="color:var(--mc-gold)">Common</span> Biomes</h2>
+        <p class="section-desc">Each biome offers unique terrain, resources, and atmosphere to discover.
+          <em style="font-size:.8rem;color:#4a7a50">Click any card to explore all biomes.</em></p>
+      </div>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+
+        <div class="col">
+          <div class="mc-card" onclick="openCarousel('biomes',0)">
+            <div class="card-img-wrap">
+              <img src="images/forest.png" alt="Forest Biome" class="card-img-top mc-card-img"
+                onerror="this.parentElement.innerHTML='<div class=\'card-img-fallback biome-bg-forest\'>&#127794;</div>'">
+            </div>
+            <div class="card-body-mc">
+              <span class="card-badge" style="background:#1b5e2044;color:#81c784;border:1px solid #1b5e20">COMMON</span>
+              <h5 class="card-name">Forest</h5>
+              <p class="card-desc">A green area filled with trees and animals. Great source of wood and passive mobs.</p>
+              <span class="card-click-hint">&#9658; VIEW ALL</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="mc-card" onclick="openCarousel('biomes',1)">
+            <div class="card-img-wrap">
+              <img src="images/plains.png" alt="Plains Biome" class="card-img-top mc-card-img"
+                onerror="this.parentElement.innerHTML='<div class=\'card-img-fallback biome-bg-plains\'>&#127806;</div>'">
+            </div>
+            <div class="card-body-mc">
+              <span class="card-badge" style="background:#1b5e2044;color:#81c784;border:1px solid #1b5e20">COMMON</span>
+              <h5 class="card-name">Plains</h5>
+              <p class="card-desc">Flat land ideal for building. Villages commonly spawn here, making it great for early survival.</p>
+              <span class="card-click-hint">&#9658; VIEW ALL</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="mc-card" onclick="openCarousel('biomes',2)">
+            <div class="card-img-wrap">
+              <img src="images/desert.png" alt="Desert Biome" class="card-img-top mc-card-img"
+                onerror="this.parentElement.innerHTML='<div class=\'card-img-fallback biome-bg-desert\'>&#127797;</div>'">
+            </div>
+            <div class="card-body-mc">
+              <span class="card-badge" style="background:#f9a82522;color:#ffe082;border:1px solid #f9a825">HOT</span>
+              <h5 class="card-name">Desert</h5>
+              <p class="card-desc">Hot biome with sand and cacti. Contains desert temples with hidden loot and sand traps.</p>
+              <span class="card-click-hint">&#9658; VIEW ALL</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="mc-card" onclick="openCarousel('biomes',3)">
+            <div class="card-img-wrap">
+              <img src="images/jungle.png" alt="Jungle Biome" class="card-img-top mc-card-img"
+                onerror="this.parentElement.innerHTML='<div class=\'card-img-fallback biome-bg-jungle\'>&#129436;</div>'">
+            </div>
+            <div class="card-body-mc">
+              <span class="card-badge" style="background:#1b5e2044;color:#81c784;border:1px solid #1b5e20">RARE</span>
+              <h5 class="card-name">Jungle</h5>
+              <p class="card-desc">Dense trees and vines with rare loot. Home to temples, parrots, and ocelots.</p>
+              <span class="card-click-hint">&#9658; VIEW ALL</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="mc-card" onclick="openCarousel('biomes',4)">
+            <div class="card-img-wrap">
+              <img src="images/mountains.png" alt="Mountains Biome" class="card-img-top mc-card-img"
+                onerror="this.parentElement.innerHTML='<div class=\'card-img-fallback biome-bg-mountains\'>&#9968;</div>'">
+            </div>
+            <div class="card-body-mc">
+              <span class="card-badge" style="background:#37474f44;color:#90a4ae;border:1px solid #546e7a">ELEVATED</span>
+              <h5 class="card-name">Mountains</h5>
+              <p class="card-desc">High terrain with stone and snow. Goats roam the peaks and emeralds can be found inside.</p>
+              <span class="card-click-hint">&#9658; VIEW ALL</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="mc-card" onclick="openCarousel('biomes',5)">
+            <div class="card-img-wrap">
+              <img src="images/taiga.png" alt="Taiga Biome" class="card-img-top mc-card-img"
+                onerror="this.parentElement.innerHTML='<div class=\'card-img-fallback biome-bg-taiga\'>&#127784;</div>'">
+            </div>
+            <div class="card-body-mc">
+              <span class="card-badge" style="background:#0d1f3344;color:#80cbc4;border:1px solid #00695c">COLD</span>
+              <h5 class="card-name">Taiga</h5>
+              <p class="card-desc">Cold forest with spruce trees. Home to wolves and foxes. Villages here use spruce wood.</p>
+              <span class="card-click-hint">&#9658; VIEW ALL</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- SEEDS -->
+  <section id="seeds">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">&#127807; World Generation</span>
+        <h2 class="section-title"><span style="color:var(--mc-gold)">Famous</span> Seeds</h2>
+        <p class="section-desc">Enter these seeds in your Minecraft world creation screen for unique experiences.
+          <em style="font-size:.8rem;color:#4a7a50">Click any seed card to explore all seeds.</em></p>
+      </div>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 justify-content-center mb-5">
+
+        <div class="col">
+          <div class="seed-card" onclick="openCarousel('seeds',0)">
+            <div class="seed-card-img-wrap">
+              <img src="images/village_seed.png" alt="Village Spawn Seed" class="seed-card-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+              <span class="seed-icon-fallback">&#127960;</span>
+            </div>
+            <h5 class="seed-name">Village Spawn Seed</h5>
+            <p class="seed-desc">Start near a village. Get early access to trades, shelter, and food from day one.</p>
+            <div class="seed-number-row">
+              <code class="seed-number">6630997395534342573</code>
+              <button class="seed-copy-btn"
+                onclick="event.stopPropagation();copySeed(this,'6630997395534342573')">&#9138; Copy</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="seed-card" onclick="openCarousel('seeds',1)">
+            <div class="seed-card-img-wrap">
+              <img src="images/mountain_valley_seed.png" alt="Mountain Valley Seed" class="seed-card-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+              <span class="seed-icon-fallback">&#127956;</span>
+            </div>
+            <h5 class="seed-name">Mountain Valley Seed</h5>
+            <p class="seed-desc">Beautiful valley surrounded by mountains. Stunning scenery and great natural defense.</p>
+            <div class="seed-number-row">
+              <code class="seed-number">5101553622029575588</code>
+              <button class="seed-copy-btn"
+                onclick="event.stopPropagation();copySeed(this,'5101553622029575588')">&#9138; Copy</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="seed-card" onclick="openCarousel('seeds',2)">
+            <div class="seed-card-img-wrap">
+              <img src="images/speedrun_seed.png" alt="Speedrun Seed" class="seed-card-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+              <span class="seed-icon-fallback">&#9889;</span>
+            </div>
+            <h5 class="seed-name">Speedrun Seed</h5>
+            <p class="seed-desc">Good for fast game progression. Stronghold and loot nearby for record-breaking runs.</p>
+            <div class="seed-number-row">
+              <code class="seed-number">1679041161551979355</code>
+              <button class="seed-copy-btn"
+                onclick="event.stopPropagation();copySeed(this,'1679041161551979355')">&#9138; Copy</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="seed-card" onclick="openCarousel('seeds',3)">
+            <div class="seed-card-img-wrap">
+              <img src="images/survival_island_seed.png" alt="Survival Island Seed" class="seed-card-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+              <span class="seed-icon-fallback">&#127965;</span>
+            </div>
+            <h5 class="seed-name">Survival Island Seed</h5>
+            <p class="seed-desc">Start on a small isolated island. Limited resources force creative and efficient survival.</p>
+            <div class="seed-number-row">
+              <code class="seed-number">-2905686047069235898</code>
+              <button class="seed-copy-btn"
+                onclick="event.stopPropagation();copySeed(this,'-2905686047069235898')">&#9138; Copy</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="seed-card" onclick="openCarousel('seeds',4)">
+            <div class="seed-card-img-wrap">
+              <img src="images/cave_system_seed.png" alt="Cave System Seed" class="seed-card-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+              <span class="seed-icon-fallback">&#128371;</span>
+            </div>
+            <h5 class="seed-name">Cave System Seed</h5>
+            <p class="seed-desc">Large underground cave networks. Perfect for mining and exploring the deep dark underground.</p>
+            <div class="seed-number-row">
+              <code class="seed-number">6002410844389446864</code>
+              <button class="seed-copy-btn"
+                onclick="event.stopPropagation();copySeed(this,'6002410844389446864')">&#9138; Copy</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- CREATORS -->
+  <section id="creators">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">&#127918; Community</span>
+        <h2 class="section-title"><span style="color:var(--mc-gold)">Famous</span> Creators</h2>
+        <p class="section-desc">These content creators helped shape the Minecraft community as we know it today.
+          <em style="font-size:.8rem;color:#4a7a50">Click any card to explore all creators.</em></p>
+      </div>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+
+        <div class="col">
+          <div class="creator-card" onclick="openCarousel('creators',0)">
+            <div class="creator-avatar-wrap">
+              <img src="images/creator_dream.png" alt="Dream" class="creator-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+              <div class="creator-avatar" style="background:#1b3a1b;display:none">&#127917;</div>
+            </div>
+            <span class="creator-tag">SPEEDRUNNER</span>
+            <h5 class="creator-name">Dream</h5>
+            <p class="creator-desc">Popular Minecraft speedrunner and content creator. Known for the MCC events and manhunt series.</p>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="creator-card" onclick="openCarousel('creators',1)">
+            <div class="creator-avatar-wrap">
+              <img src="images/creator_technoblade.png" alt="Technoblade" class="creator-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+              <div class="creator-avatar" style="background:#1a0d2e;display:none">&#128081;</div>
+            </div>
+            <span class="creator-tag">PVP LEGEND</span>
+            <h5 class="creator-name">Technoblade</h5>
+            <p class="creator-desc">Legendary PvP player and beloved creator. Forever remembered in the Minecraft community.</p>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="creator-card" onclick="openCarousel('creators',2)">
+            <div class="creator-avatar-wrap">
+              <img src="images/creator_mrbeast.png" alt="MrBeast Gaming" class="creator-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+              <div class="creator-avatar" style="background:#1a1500;display:none">&#128176;</div>
+            </div>
+            <span class="creator-tag">CHALLENGES</span>
+            <h5 class="creator-name">MrBeast Gaming</h5>
+            <p class="creator-desc">Known for large-scale Minecraft challenges and competitions with massive prize pools.</p>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="creator-card" onclick="openCarousel('creators',3)">
+            <div class="creator-avatar-wrap">
+              <img src="images/creator_tommyinnit.png" alt="TommyInnit" class="creator-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+              <div class="creator-avatar" style="background:#0d1a33;display:none">&#127897;</div>
+            </div>
+            <span class="creator-tag">STREAMER</span>
+            <h5 class="creator-name">TommyInnit</h5>
+            <p class="creator-desc">Funny and energetic Minecraft streamer. Rose to fame through the Dream SMP server.</p>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="creator-card" onclick="openCarousel('creators',4)">
+            <div class="creator-avatar-wrap">
+              <img src="images/creator_pewdiepie.png" alt="PewDiePie" class="creator-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+              <div class="creator-avatar" style="background:#330d0d;display:none">&#129681;</div>
+            </div>
+            <span class="creator-tag">OG CREATOR</span>
+            <h5 class="creator-name">PewDiePie</h5>
+            <p class="creator-desc">Famous for his beloved Minecraft survival series that brought millions back to the game.</p>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="creator-card" onclick="openCarousel('creators',5)">
+            <div class="creator-avatar-wrap">
+              <img src="images/creator_philza.png" alt="Philza" class="creator-img"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+              <div class="creator-avatar" style="background:#0d2233;display:none">&#128142;</div>
+            </div>
+            <span class="creator-tag">HARDCORE</span>
+            <h5 class="creator-name">Philza</h5>
+            <p class="creator-desc">Hardcore survival Minecraft expert. Holds the record for longest Hardcore world before losing it.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- COMMUNITY / CONTACT -->
+  <section id="contact" style="background:linear-gradient(135deg,#071208 0%,#0d0d1a 100%);padding:5rem 0 4rem;overflow:hidden;position:relative;">
+    <div class="contact-grid-overlay"></div>
+    <div class="container" style="position:relative;z-index:1;">
+
+      <div style="text-align:center;margin-bottom:2.5rem;">
+        <span class="section-label">&#128233; Community Hub</span>
+        <h2 class="section-title"><span style="color:var(--mc-gold)">Share</span> Your Ideas</h2>
+        <p class="section-desc">Join our fan creators and share your builds, mobs, and seeds with the Minecraftive community!</p>
+      </div>
+
+      <div class="contact-community-grid">
+
+        <!-- VIDEO 1 -->
+        <div class="contact-vid-col-outer">
+          <div class="community-vid-card">
+            <div class="cvid-wrap">
+              <video autoplay muted loop playsinline style="display:block;">
+                <source src="videos/fan_Dzerykk.mp4" type="video/mp4">
+              </video>
+              <div class="cvid-fallback" style="background:linear-gradient(180deg,#0f2a0f,#0a1a0a);">
+                <span class="cvid-fallback-icon">&#9935;</span>
+                <span class="cvid-fallback-label">MINING</span>
+              </div>
+              <div class="cvid-live"><span class="cvid-live-dot"></span>LIVE</div>
+              <div class="cvid-views">&#128065; 2.1K</div>
+            </div>
+            <div class="cvid-footer">
+              <span class="cvid-username">@Dzerykk</span>
+              <span class="cvid-role">fan creator</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIDEO 2 -->
+        <div class="contact-vid-col-inner">
+          <div class="community-vid-card">
+            <div class="cvid-wrap">
+              <video autoplay muted loop playsinline style="display:block;">
+                <source src="videos/fan_Rekko.mp4" type="video/mp4">
+              </video>
+              <div class="cvid-fallback" style="background:linear-gradient(180deg,#0d1a2a,#081018);">
+                <span class="cvid-fallback-icon">&#127985;</span>
+                <span class="cvid-fallback-label" style="color:#80cbc4;">HUNTING</span>
+              </div>
+              <div class="cvid-live"><span class="cvid-live-dot"></span>LIVE</div>
+              <div class="cvid-views">&#128065; 4.8K</div>
+            </div>
+            <div class="cvid-footer">
+              <span class="cvid-username">@Rekko</span>
+              <span class="cvid-role">fan creator</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CENTER FORM -->
+        <div class="contact-form-col">
+          <div class="contact-form-card">
+            <div class="contact-form-card-label">&#10022; SHARE YOUR IDEAS &#10022;</div>
+
+            <div class="contact-icon-strip">
+              <span title="Builds">&#129523;</span>
+              <span title="Mobs">&#129503;</span>
+              <span title="Seeds">&#127807;</span>
+              <span title="Community">&#128172;</span>
+              <span title="Creations">&#9935;</span>
+            </div>
+
+            <div id="formThankYouInline">
+              <div class="ty-icon">&#9989;</div>
+              <h5>Message Sent!</h5>
+              <p>Thanks for reaching out! We'll review your idea and may feature it on Minecraftive.</p>
+              <button class="btn-mc mt-3" style="font-size:.55rem;padding:.6rem 1.2rem"
+                onclick="resetInlineForm()">&larr; Send Another</button>
+            </div>
+
+            <form id="inlineContactForm" action="contact.php" method="POST" novalidate>
+              <div class="row g-2 mb-2">
+                <div class="col-6">
+                  <label class="mc-form-label" for="iName">Name *</label>
+                  <input type="text" class="form-control mc-form-control" id="iName" name="name" placeholder="Steve Notch" required>
+                  <div class="invalid-feedback">Required.</div>
+                </div>
+                <div class="col-6">
+                  <label class="mc-form-label" for="iEmail">Email *</label>
+                  <input type="email" class="form-control mc-form-control" id="iEmail" name="email" placeholder="steve@mc.com" required>
+                  <div class="invalid-feedback">Valid email required.</div>
+                </div>
+              </div>
+              <div class="mb-2">
+                <label class="mc-form-label" for="iType">Suggestion Type *</label>
+                <select class="form-select mc-form-control" id="iType" name="type" required>
+                <option value="" disabled selected>Choose a category...</option>
+                <option value="build">&#129523; Build Idea</option>
+                <option value="mob">&#129503; Mob Suggestion</option>
+                <option value="seed">&#127807; Seed Idea</option>
+                <option value="other">&#10067; Other</option>
+                </select>
+                <div class="invalid-feedback">Please select a type.</div>
+              </div>
+              <div class="mb-2">
+                <label class="mc-form-label" for="iMsg">
+                  Message * <span style="color:#555;font-size:.72rem;font-weight:400">(min. 20 chars)</span>
+                </label>
+                <textarea class="form-control mc-form-control" id="iMsg" name="message" rows="4"
+                  placeholder="Describe your idea in detail..." required minlength="20"></textarea>
+                <div class="invalid-feedback" id="iMsgFeedback">Message must be at least 20 characters.</div>
+                <div class="mt-1 text-end" style="font-size:.7rem;color:#555;">
+                  <span id="iCharCount">0</span> / 20 min
+                </div>
+              </div>
+              <button type="button" class="btn-mc w-100" style="font-size:.6rem;padding:.75rem;"
+                onclick="submitInlineForm()">&#128232; Send Message</button>
+            </form>
+
+            <div class="contact-modal-btn-strip">
+              <p>Prefer the full form experience?</p>
+              <button class="btn-mc" style="font-size:.55rem;padding:.6rem 1.3rem;background:var(--mc-gold);color:#1a1000;box-shadow:0 4px 0 #b8860b,0 0 18px #ffd60055;border:none;"
+                data-bs-toggle="modal" data-bs-target="#contactModal">&#128203; Open Full Contact Form</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIDEO 3 -->
+        <div class="contact-vid-col-inner">
+          <div class="community-vid-card">
+            <div class="cvid-wrap">
+              <video autoplay muted loop playsinline style="display:block;">
+                <source src="videos/fan_manW3LL.mp4" type="video/mp4">
+              </video>
+              <div class="cvid-fallback" style="background:linear-gradient(180deg,#1a2a0d,#0d1808);">
+                <span class="cvid-fallback-icon">&#127806;</span>
+                <span class="cvid-fallback-label" style="color:#aed581;">FARMING</span>
+              </div>
+              <div class="cvid-live"><span class="cvid-live-dot"></span>LIVE</div>
+              <div class="cvid-views">&#128065; 3.5K</div>
+            </div>
+            <div class="cvid-footer">
+              <span class="cvid-username">@manW3LL</span>
+              <span class="cvid-role">fan creator</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIDEO 4 -->
+        <div class="contact-vid-col-outer">
+          <div class="community-vid-card">
+            <div class="cvid-wrap">
+              <video autoplay muted loop playsinline style="display:block;">
+                <source src="videos/fan_SlayWithKean.mp4" type="video/mp4">
+              </video>
+              <div class="cvid-fallback" style="background:linear-gradient(180deg,#2a1010,#180a0a);">
+                <span class="cvid-fallback-icon">&#9876;&#65039;</span>
+                <span class="cvid-fallback-label" style="color:#ef9a9a;">COMBAT</span>
+              </div>
+              <div class="cvid-live"><span class="cvid-live-dot"></span>LIVE</div>
+              <div class="cvid-views">&#128065; 6.2K</div>
+            </div>
+            <div class="cvid-footer">
+              <span class="cvid-username">@SlayWithKean</span>
+              <span class="cvid-role">fan creator</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /.contact-community-grid -->
+
+      <div style="text-align:center;margin-top:2rem;">
+        <div class="contact-live-pill">
+          <span class="cvid-live-dot"></span>
+          <span class="pill-text">4 COMMUNITY CREATORS LIVE NOW</span>
+          <span class="cvid-live-dot" style="animation-delay:.6s"></span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FULL CONTACT MODAL -->
+  <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="contactModalLabel">&#9935; Send Us Your Ideas</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div id="formThankYou">
+            <div class="ty-icon">&#9989;</div>
+            <h5>Message Sent!</h5>
+            <p>Thanks for reaching out! We'll review your idea and may feature it on Minecraftive.</p>
+            <button class="btn-mc mt-3" style="font-size:.6rem;padding:.7rem 1.5rem"
+              onclick="resetForm()">&larr; Send Another</button>
+          </div>
+          <form id="contactForm" action="contact.php" method="POST" novalidate>
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="mc-form-label" for="contactName">Your Name *</label>
+                <input type="text" class="form-control mc-form-control" id="contactName"
+                  placeholder="Steve Notch" name="name" required>
+                <div class="invalid-feedback">Please enter your name.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="mc-form-label" for="contactEmail">Email Address *</label>
+                <input type="email" class="form-control mc-form-control" id="contactEmail"
+                  placeholder="steve@minecraft.com" name="email" required>
+                <div class="invalid-feedback">Please enter a valid email.</div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="mc-form-label" for="contactType">Suggestion Type *</label>
+              <select class="form-select mc-form-control" id="contactType" name="type" required>
+                <option value="" disabled selected>Choose a category...</option>
+                <option value="build">&#129523; Build Idea</option>
+                <option value="mob">&#129503; Mob Suggestion</option>
+                <option value="seed">&#127807; Seed Idea</option>
+                <option value="other">&#10067; Other</option>
+                    </select>
+              <div class="invalid-feedback">Please select a suggestion type.</div>
+            </div>
+            <div class="mb-3">
+              <label class="mc-form-label" for="contactMessage">
+                Your Message * <span style="color:#555;font-size:.75rem;font-weight:400">(min. 20 characters)</span>
+              </label>
+              <textarea class="form-control mc-form-control" id="contactMessage" rows="5"
+                  placeholder="Describe your idea in detail..." name="message" required minlength="20"></textarea>
+              <div class="invalid-feedback" id="msgFeedback">Message must be at least 20 characters.</div>
+              <div class="mt-1 text-end" style="font-size:.72rem;color:#555">
+                <span id="charCount">0</span> / 20 min
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm" data-bs-dismiss="modal"
+            style="background:transparent;border:1px solid #2e7d32;color:var(--mc-muted);border-radius:3px;padding:.45rem 1rem;font-weight:700">Cancel</button>
+          <button type="button" class="btn-mc" style="font-size:.65rem;padding:.65rem 1.5rem"
+            onclick="submitForm()">&#128232; Send Message</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-brand mb-2">
+      <img src="images/logo.png" alt="Minecraftive Logo" class="footer-logo">
+      <span class="footer-brand-text">Minecraft<span class="footer-brand-ive">ive</span></span>
+      </div>
+      <div class="footer-text">An Interactive Minecraft Fan Hub</div>
+      <div class="d-flex justify-content-center gap-4 mt-3" style="font-size:.82rem">
+        <a href="#mobs"     class="text-mc-muted text-decoration-none">Mobs</a>
+        <a href="#biomes"   class="text-mc-muted text-decoration-none">Biomes</a>
+        <a href="#seeds"    class="text-mc-muted text-decoration-none">Seeds</a>
+        <a href="#creators" class="text-mc-muted text-decoration-none">Creators</a>
+      </div>
+      <p class="footer-disclaimer">
+        &#9888; This is a fan-made, non-commercial website. Minecraft&reg; is a trademark of Mojang Studios AB.
+        This site is not affiliated with, endorsed by, or sponsored by Mojang Studios or Microsoft Corporation.
+        All Minecraft-related names, trademarks, and assets belong to their respective owners.
+      </p>
+      <div class="mt-3" style="font-size:.7rem;color:#333">Made with &hearts; by the Minecraft fan community &middot; 2026</div>
+    </div>
+  </footer>
+
+  <!-- BACK TO TOP -->
+  <a href="#hero" id="backTop" title="Back to top"><i class="bi bi-chevron-up"></i></a>
+
+</div><!-- /#siteContent -->
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Site Scripts -->
+<script src="js/script.js"></script>
+</body>
+</html>
