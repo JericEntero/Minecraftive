@@ -7,7 +7,7 @@
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   header('Location: index.html');
   exit;
-}
+}315302
 
 // ── Receive & Sanitize ──────────────────────────────────────
 $name    = htmlspecialchars(trim($_POST['name']    ?? ''));
@@ -95,6 +95,10 @@ $typeLabel = $typeLabels[$type] ?? htmlspecialchars($type);
       <div class="summary-row">
         <span class="summary-label">MESSAGE</span>
         <span class="summary-value"><?php echo nl2br($message); ?></span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">SENT AT</span>
+        <span class="summary-value"><?php echo date('F j, Y \a\t g:i A'); ?></span>
       </div>
     </div>
 
