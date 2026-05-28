@@ -1483,6 +1483,16 @@ footer .footer-disclaimer {
   .carousel-nav  { display: none; }
 }
 
+/* Responsive adjustments by Echo */
+@media (max-width: 480px) {
+  .navbar { padding: .5rem 0; }
+  .hero-title { font-size: 1.2rem; }
+  .btn-mc { font-size: .55rem; padding: .7rem 1.4rem; }
+  .section-title { font-size: .85rem; }
+  .seed-number { font-size: .45rem; }
+  .creator-name { font-size: .5rem; }
+}
+
 @media (max-width: 640px) {
   .carousel-slide { grid-template-columns: 1fr; min-height: auto; }
   .carousel-img-side { padding: 1.5rem 1.5rem .5rem; }
