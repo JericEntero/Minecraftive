@@ -7,7 +7,7 @@
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   header('Location: index.html');
   exit;
-}315302
+}
 
 // ── Receive & Sanitize ──────────────────────────────────────
 $name    = htmlspecialchars(trim($_POST['name']    ?? ''));
